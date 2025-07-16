@@ -2,44 +2,48 @@ package galaga;
 
 import java.awt.Graphics;
 import java.awt.Color;
-import java.awt.Font;
 import java.awt.Rectangle;
 
 public class Enemigo {
     private int x, y;
     private int tamaño;
-    private Color color;
-    private final String simbolo = "x";
+    private final Color color = Color.RED;  
+    private int direccion;
+    private int pantallaAncho;
 
-    public Enemigo(int pantallaAncho) {
-        this.tamaño = (int)(Math.random() * 30 + 30);
-        this.x = (int)(Math.random() * (pantallaAncho - tamaño));
-        this.y = (int)(Math.random() * -100) - 50;
-        this.color = new Color(
-            (int)(Math.random() * 155 + 100),
-            (int)(Math.random() * 155 + 100),
-            (int)(Math.random() * 155 + 100)
-        );
+    public Enemigo(int pantallaAncho, boolean ladoIzquierdo) {
+        this.pantallaAncho = pantallaAncho;
+        this.tamaño = 40;  
+        this.y = 5;
+        this.x = ladoIzquierdo ? 0 : pantallaAncho - tamaño;
+        this.direccion = ladoIzquierdo ? 1 : -1;
     }
 
-
     public void mover(int velocidad) {
-        y += velocidad;
+        x += direccion * velocidad;
+
+        if (x <= 0) {
+            direccion = 1;
+            y += 40;
+            x = 0;
+        } else if (x + tamaño >= pantallaAncho) {
+            direccion = -1;
+            y += tamaño / 2;
+            x = pantallaAncho - tamaño;
+        }
     }
 
     public void dibujar(Graphics g) {
         g.setColor(color);
-        g.setFont(new Font("Arial", Font.BOLD, tamaño));
-        g.drawString(simbolo, x, y);
+        g.fillRect(x, y, tamaño, tamaño);
     }
-
 
     public Rectangle getRect() {
         return new Rectangle(x, y, tamaño, tamaño);
     }
 
- 
     public int getY() {
         return y;
     }
 }
+

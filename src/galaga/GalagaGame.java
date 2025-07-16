@@ -9,14 +9,17 @@ import java.util.Random;
 public class GalagaGame extends JFrame {
     public static final int ANCHO = 800, ALTO = 600;
     public static final int TAM_JUGADOR = 40, TAM_ENEMIGO = 40;
-    public static final int VEL_ENEMIGO = 1;
+    public static final int VEL_ENEMIGO = 10;
 
     private Jugador jugador;
     private ArrayList<Enemigo> enemigos = new ArrayList<>();
     private boolean[] teclas = new boolean[256];
     private boolean juegoTerminado = false;
-    private Random random = new Random();
-
+    private int tiempoEntreEnemigos = 60; 
+    private int contadorSpawn = 0;
+    private int totalEnemigosCreados = 0;
+    private int maxEnemigos = 10;
+    
     public GalagaGame() {
         setTitle("Galaga Java");
         setSize(ANCHO, ALTO);
@@ -25,7 +28,6 @@ public class GalagaGame extends JFrame {
         add(new PanelJuego());
 
         jugador = new Jugador(ANCHO / 2, ALTO - 100, TAM_JUGADOR, TAM_JUGADOR);
-        crearEnemigos(10);
 
         addKeyListener(new KeyAdapter() {
             @Override
@@ -55,7 +57,8 @@ public class GalagaGame extends JFrame {
     private void crearEnemigos(int cantidad) {
         enemigos.clear();
         for (int i = 0; i < cantidad; i++) {
-            enemigos.add(new Enemigo(random.nextInt(ANCHO - TAM_ENEMIGO)));
+            boolean ladoIzquierdo = (i % 2 == 0); // alterna izquierda/derecha
+            enemigos.add(new Enemigo(ANCHO, ladoIzquierdo));
         }
     }
 
@@ -65,19 +68,28 @@ public class GalagaGame extends JFrame {
 
         jugador.actualizarDisparos();
 
+        contadorSpawn++;
+        if (contadorSpawn >= tiempoEntreEnemigos && totalEnemigosCreados < maxEnemigos) {
+            contadorSpawn = 0;
+
+            boolean ladoIzquierdo = (totalEnemigosCreados % 2 == 0);
+            enemigos.add(new Enemigo(ANCHO, ladoIzquierdo));
+
+            totalEnemigosCreados++;
+        }
+
         for (Enemigo e : enemigos) {
             e.mover(VEL_ENEMIGO);
         }
 
         detectarColisiones();
         verificarFin();
+    
     }
 
     private void detectarColisiones() {
         Rectangle jugadorRect = jugador.getRectangulo();
-
         ArrayList<Disparo> disparos = new ArrayList<>(jugador.getDisparos());
-
         for (int i = disparos.size() - 1; i >= 0; i--) {
             Rectangle rectBala = new Rectangle(disparos.get(i).getX(), disparos.get(i).getY(), 5, 10);
             for (int j = enemigos.size() - 1; j >= 0; j--) {
@@ -111,7 +123,8 @@ public class GalagaGame extends JFrame {
         jugador.reiniciar(ANCHO / 2, ALTO - 100);
         enemigos.clear();
         juegoTerminado = false;
-        crearEnemigos(10);
+        totalEnemigosCreados = 0;  
+        contadorSpawn = 0;
     }
 
     private class PanelJuego extends JPanel {
