@@ -41,10 +41,4 @@ public class PantallaInicio extends JFrame {
         add(panel);
     }
 
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> {
-            PantallaInicio menu = new PantallaInicio();
-            menu.setVisible(true);
-        });
-    }
 }

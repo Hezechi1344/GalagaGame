@@ -31,7 +31,7 @@ public class Jugador {
         this.disparos = new ArrayList<>();
     }
 
-    // --- Movimiento lateral ---
+ // --- Movimiento lateral ---
     public void moverIzquierda(int limiteIzquierdo) {
         if (x - velocidad >= limiteIzquierdo) {
             x -= velocidad;
@@ -44,6 +44,19 @@ public class Jugador {
         }
     }
 
+    // --- Movimiento vertical ---
+    public void moverArriba(int limiteSuperior) {
+        if (y - velocidad >= limiteSuperior) {
+            y -= velocidad;
+        }
+    }
+
+    public void moverAbajo(int limiteInferior) {
+        if (y + alto + velocidad <= limiteInferior) {
+            y += velocidad;
+        }
+    }
+    
     // --- Disparo ---
     public void disparar() {
         if (estaVivo) {
@@ -52,7 +65,7 @@ public class Jugador {
         }
     }
 
-    // --- Actualización de disparos (mover y eliminar los que salgan de pantalla) ---
+
     public void actualizarDisparos() {
         List<Disparo> activos = new ArrayList<>();
         for (Disparo d : disparos) {
@@ -72,14 +85,12 @@ public class Jugador {
         }
     }
 
-    // --- Aumentar puntos ---
     public void sumarPuntos(int cantidad) {
         if (estaVivo) {
             puntos += cantidad;
         }
     }
 
-    // --- Reiniciar jugador (opcional) ---
     public void reiniciar(int xInicial, int yInicial) {
         this.x = xInicial;
         this.y = yInicial;
@@ -100,4 +111,5 @@ public class Jugador {
         return new Rectangle(x, y, ancho, alto);
     }
 }
+
 
